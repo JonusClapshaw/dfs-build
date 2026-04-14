@@ -92,10 +92,12 @@ public class Build {
 
     seen.add(vertex.data);
 
-    for(Vertex<T> neighbors : vertex.neighbors){
-      printSelfLoopers(neighbors, seen, start);
-      if(neighbors != start ){
-        System.out.println(neighbors.data);
+    start = vertex.data;
+
+    for(Vertex<T> neighbor : vertex.neighbors){
+      printSelfLoopers(neighbor, seen, start);
+      if(neighbor.neighbors.contains(neighbor)){
+        System.out.println(neighbor.data);
       }
     }
   }
