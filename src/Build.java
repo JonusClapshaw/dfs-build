@@ -78,10 +78,10 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
-    printSelfLoopers(vertex, new HashSet<>(), vertex.data);
+    printSelfLoopers(vertex, new HashSet<>());
   }
 
-  public static <T> void printSelfLoopers(Vertex<T> vertex, HashSet<T> seen, T start){
+  public static <T> void printSelfLoopers(Vertex<T> vertex, HashSet<T> seen){
     if(vertex == null){
       return;
     }
@@ -92,11 +92,9 @@ public class Build {
 
     seen.add(vertex.data);
 
-    start = vertex.data;
-
     for(Vertex<T> neighbor : vertex.neighbors){
-      printSelfLoopers(neighbor, seen, start);
-      if(neighbor.neighbors.contains(neighbor)){
+      printSelfLoopers(neighbor, seen);
+      if(neighbor.neighbors.contains(neighbor) && neighbor.neighbors != null){
         System.out.println(neighbor.data);
       }
     }
@@ -111,6 +109,20 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+    return canReach(start, destination, new HashSet<String>());
+  }
+
+  private static boolean canReach(Airport start, Airport desitination, HashSet<String> seen){
+    if(start == null) return false;
+    if(seen.contains(start.getName())) return false;
+    if(start == desitination) return true;
+
+    seen.add(start.getName());
+
+    for(Airport flight : start.getOutboundFlights()){
+      if(canReach(flight, desitination, seen)) return true;
+    }
+
     return false;
   }
 
