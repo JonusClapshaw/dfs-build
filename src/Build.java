@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,23 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    printShortWords(vertex, k, new HashSet<>(), new HashSet<>());
+  }
+
+  public static void printShortWords(Vertex<String> vertex, int k, Set<String> seen, Set<String> shortWords) {
+    if(vertex == null) return;
+    if(seen.contains(vertex.data)) return;
+
+    seen.add(vertex.data);
+
+    if(vertex.data.length() < k){
+      System.out.println(vertex.data);
+    }
+
+    for(Vertex<String> word : vertex.neighbors){
+      printShortWords(word, k, seen, shortWords);
+    }
+
   }
 
   /**
@@ -23,7 +41,33 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    return longestWord(vertex, new HashSet<>(), "");
+  }
+
+  public static String longestWord(Vertex<String> vertex, Set<String> seen, String word) {
+    if(vertex == null){
+      return "";
+    }
+
+    if(seen.contains(vertex.data)){
+      return word;
+    }
+
+    seen.add(vertex.data);
+
+    if(vertex.data.length() > word.length()){
+      word = vertex.data;
+    }
+
+    for(Vertex<String> longWord : vertex.neighbors){
+      String words = longestWord(longWord, seen, word);
+
+      if(words.length() > word.length()){
+        word = words;
+      }
+    }
+    
+    return word;
   }
 
   /**
@@ -34,6 +78,26 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+    printSelfLoopers(vertex, new HashSet<>(), vertex.data);
+  }
+
+  public static <T> void printSelfLoopers(Vertex<T> vertex, HashSet<T> seen, T start){
+    if(vertex == null){
+      return;
+    }
+
+    if(seen.contains(vertex.data)){
+      return;
+    }
+
+    seen.add(vertex.data);
+
+    for(Vertex<T> neighbors : vertex.neighbors){
+      printSelfLoopers(neighbors, seen, start);
+      if(neighbors != start ){
+        System.out.println(neighbors.data);
+      }
+    }
   }
 
   /**
